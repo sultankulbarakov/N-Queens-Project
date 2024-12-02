@@ -80,7 +80,6 @@ class NQueensSolver:
         return board_str
 
 def main():
-    """Example usage of the NQueensSolver class."""
     # Testing with 8-queens
     solver = NQueensSolver(8)
     solution = solver.solve(max_restarts=100)
