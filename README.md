@@ -25,83 +25,84 @@ N-Queens-Project/
 │   └── performance_analysis.py
 │
 └── results/
-    ├── figures/              # Generated plots and visualizations
-    └── data/                 # Performance data
+    └── figures/              # Generated plots and visualizations
 ```
 
-## Implementation Details
+### Core Implementation (`src/`)
 
-### Key Components
+#### `hill_climbing.py`
+Contains the main `NQueensSolver` class that implements the hill climbing algorithm.
 
-1. **Hill Climbing Algorithm** (`hill_climbing.py`)
-   - Random initialization of queens (one per column)
-   - Iterative improvement by moving queens to reduce conflicts
-   - Random restarts when stuck in local optima
-   
-2. **Board Management** (`board.py`)
-   - Efficient board representation using 1D array
-   - Conflict calculation for rows and diagonals
-   - State management and neighbor generation
+Key methods:
+- `__init__(n)`: Creates a solver for an n×n board
+- `solve(max_restarts=100, max_iterations=1000)`: Tries to find a solution using hill climbing
+  - Returns a solution board if found, None otherwise
+  - Records number of conflicts after each iteration
+- `_calculate_conflicts(board)`: Counts how many queens are threatening each other
+- `_get_best_neighbor(board)`: Finds the board configuration with fewest conflicts among neighbors
+- `visualize_board(board)`: Creates a text representation of the board state
 
-3. **Visualization** (`visualizer.py`)
-   - Performance metrics plotting
-   - Board state visualization
-   - Success rate and iteration analysis
+#### `board.py`
+Handles the chessboard representation and basic board operations.
 
-### Performance Analysis (`performance_analysis.py`)
-Analyzes algorithm performance across different board sizes (4x4 to 20x20) measuring:
-- Success rate
-- Average iterations to solution
-- Conflict reduction patterns
+Key methods:
+- `place_queen(col, row)`: Places a queen at the specified position
+- `remove_queen(col)`: Removes a queen from a column
+- `is_under_attack(row, col)`: Checks if a position is threatened by any queen
+- `get_conflicts()`: Counts total conflicts on the board
+- `random_state()`: Generates a random board configuration
+- `get_neighbor_states()`: Generates all possible neighbor states
 
-## Experimental Results
+#### `visualizer.py`
+Creates visualizations for analyzing algorithm performance.
 
-### Success Rates
+Key methods:
+- `plot_conflicts_over_iterations(conflicts_history, n)`: Shows how conflicts decrease during solving
+- `plot_success_rate(board_sizes, success_rates)`: Shows success rates for different board sizes
+- `plot_avg_iterations(board_sizes, avg_iterations)`: Shows average iterations needed for different sizes
+- `visualize_board(board)`: Creates a graphical visualization of a board configuration
+
+### Analysis (`analysis/`)
+
+#### `performance_analysis.py`
+Analyzes how well the algorithm performs for different board sizes.
+- Tests board sizes from 4×4 to 20×20
+- Measures success rates and iterations needed
+- Generates plots stored in results/figures/
+- Prints detailed performance statistics
+
+## How to Run
+
+1. Solve an N-Queens puzzle:
+```python
+from src.hill_climbing import NQueensSolver
+
+# Create solver for 8×8 board
+solver = NQueensSolver(8)
+solution = solver.solve()
+
+if solution is not None:
+    print("Solution found!")
+    print(solver.visualize_board(solution))
+```
+
+2. Run performance analysis:
+```bash
+python3 analysis/performance_analysis.py
+```
+
+## Results
+
+The algorithm's performance varies with board size:
 - Small boards (N=4): ~37% success rate
 - Medium boards (N=8-12): 6-15% success rate
 - Large boards (N=14-20): <5% success rate
 
-### Average Iterations
-- Increases with board size
+Average iterations needed increases with board size:
 - N=4: ~3 iterations
 - N=20: ~11 iterations
-- Performance gap at N=14 due to no successful solutions
 
-### Key Findings
-1. Algorithm performs best on smaller board sizes
-2. Success rate decreases significantly with board size
-3. When successful, larger boards require more iterations
-4. Current implementation struggles with N≥14
-
-## Limitations and Future Improvements
-
-### Current Limitations
-1. Low success rates for larger board sizes
-2. Single-restart performance analysis may underestimate potential
-3. No parallelization for multiple attempts
-
-### Potential Improvements
-1. Implement multiple restarts with parallel processing
-2. Add simulated annealing to escape local optima
-3. Optimize neighbor state generation
-4. Implement better initial state selection
-
-## Usage Examples
-
-1. Running the hill climbing solver:
-```python
-from src.hill_climbing import NQueensSolver
-
-solver = NQueensSolver(8)
-solution = solver.solve(max_restarts=100)
-if solution is not None:
-    print(solver.visualize_board(solution))
-```
-
-2. Running performance analysis:
-```bash
-python3 analysis/performance_analysis.py
-```
+Complete results and visualizations are saved in the results/figures/ directory.
 
 ## Author
 
